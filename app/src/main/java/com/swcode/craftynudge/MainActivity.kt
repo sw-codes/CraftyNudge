@@ -1,16 +1,12 @@
 package com.swcode.craftynudge
 
-import android.content.Context
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.setMargins
 import com.swcode.craftynudge.databinding.ActivityMainBinding
@@ -23,25 +19,21 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
-import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val colourChooser = ColourChooser()
     private val layerChooser = LayerChooser()
+    private val focalPointChooser = FocalPoint()
 
     private val job =  SupervisorJob()
     private val ioScope by lazy { CoroutineScope(job + Dispatchers.IO) }
 
     private var downloadedWord: String = ""
 
-    private var focalPoints: List<String> = listOf("Image", "Quote", "Image and Quote", "Your Choice", "None")
-
     private var buttonCount = 2
     private var textViewLayersCount = 1
-    private var buttonList: List<Button> = listOf()
-    private var textViewLayersList: List<TextView> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonFocalChooser.setOnClickListener {
-            binding.textViewFocalPoint.text = chooseFocalPoint()
+            binding.textViewFocalPoint.text = focalPointChooser.chooseFocalPoint()
         }
 
         binding.buttonChooseLayer1.setOnClickListener {
@@ -173,7 +165,6 @@ class MainActivity : AppCompatActivity() {
                     try {
                         while (reader.readLine().also {line = it} != null) {
                             stringBuilder.append(line + "\n")
-//                            Log.i("stringbuilder line", line.toString())
                         }
                     } catch (e: IOException) {
                         e.printStackTrace()
@@ -185,11 +176,10 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
 //                    result = stringBuilder.toString().substring(2, stringBuilder.toString().length - 3)
-//                    Log.i("worddownloader result", result)
 //                    downloadedWord = result
                     downloadedWord = stringBuilder.toString().substring(2, stringBuilder.toString().length - 3)
                 } else {
-//                    result = connection.responseMessage
+                    result = connection.responseMessage
                 }
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
@@ -197,10 +187,5 @@ class MainActivity : AppCompatActivity() {
                 connection?.disconnect()
             }
         }
-    }
-
-    private fun chooseFocalPoint(): String {
-        var randomNum = Random.nextInt(0, focalPoints.size)
-        return focalPoints[randomNum]
     }
 }
