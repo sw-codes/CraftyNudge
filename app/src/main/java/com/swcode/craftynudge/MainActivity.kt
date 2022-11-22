@@ -95,23 +95,19 @@ class MainActivity : AppCompatActivity() {
             //create new button
             var button = Button(this)
             button.id = "$buttonCount".toInt() + 1
-            button.text = "get layer $buttonCount"
-            button.setBackgroundColor(ContextCompat.getColor(this, R.color.primary_pink))
+            button.text = "Get Layer $buttonCount"
+//            button.setBackgroundColor(ContextCompat.getColor(this, R.color.primary_pink))
             button.setTextColor(ContextCompat.getColor(this, R.color.white))
-            button.setPadding(buttonHorizontalPadding,buttonVerticalPadding,buttonHorizontalPadding,buttonVerticalPadding)
+//            button.setPadding(buttonHorizontalPadding,buttonVerticalPadding,buttonHorizontalPadding,buttonVerticalPadding)
+            button.setBackgroundResource(R.drawable.button_round_corners)
+            button.textSize = 16F
             button.layoutParams = buttonLayoutParamSet
-
-//            buttonList.toMutableList().add(button)
-//            binding.llLayerButtons.addView(button)
 
             //create new text view
             var textView = TextView(this)
             textView.id = "$textViewLayersCount".toInt() + 1
             textView.textSize = 22F
             textView.layoutParams = tvLayoutParamSet
-
-//            textViewLayersList.toMutableList().add(textView)
-//            binding.llLayerTextViews.addView(textView)
 
             button.setOnClickListener {
                 textView.text = layerChooser.chooseLayer()
@@ -153,8 +149,6 @@ class MainActivity : AppCompatActivity() {
             textViewll.addView((textView))
             linearLayout.addView(textViewll)
 
-//            binding.llLayerButtons.addView(button)
-//            binding.llLayerTextViews.addView(textViewll)
             binding.llLayerList.addView(linearLayout)
 
             buttonCount++
