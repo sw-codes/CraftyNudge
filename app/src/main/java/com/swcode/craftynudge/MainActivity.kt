@@ -26,11 +26,7 @@ class MainActivity : AppCompatActivity() {
     private val colourChooser = ColourChooser()
     private val layerChooser = LayerChooser()
     private val focalPointChooser = FocalPoint()
-
-    private val job =  SupervisorJob()
-    private val ioScope by lazy { CoroutineScope(job + Dispatchers.IO) }
-
-    private var downloadedWord: String = ""
+    private val themeChooser = Theme()
 
     private var buttonCount = 2
     private var textViewLayersCount = 1
@@ -50,10 +46,8 @@ class MainActivity : AppCompatActivity() {
             binding.textViewChosenRel.text = colourChooser.chooseColourRelationship()
         }
 
-        wordDownloader()
         binding.buttonThemeChooser.setOnClickListener {
-            binding.textViewTheme.text = downloadedWord.replaceFirstChar { it.uppercase() }
-            wordDownloader()
+            binding.textViewTheme.text = themeChooser.getTheme()
         }
 
         binding.buttonFocalChooser.setOnClickListener {
@@ -65,9 +59,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.ivAddLayers.setOnClickListener {
-//            val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-//            val rowView: View = inflater.inflate(R.layout.layer_getter, null)
-//            binding.llLayerList!!.addView(rowView, binding.llLayerList!!.childCount)
             val textMargin = resources.getDimension(R.dimen.text_margin)
             val tvLayoutParamSet = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -76,8 +67,6 @@ class MainActivity : AppCompatActivity() {
             tvLayoutParamSet.setMargins(textMargin.toInt())
 
             val buttonMargin = resources.getDimension(R.dimen.button_layer_chooser_margin)
-            val buttonHorizontalPadding = resources.getDimension(R.dimen.button_horizontal_padding).toInt()
-            val buttonVerticalPadding = resources.getDimension(R.dimen.button_vertical_padding).toInt()
             val buttonLayoutParamSet = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -88,9 +77,7 @@ class MainActivity : AppCompatActivity() {
             var button = Button(this)
             button.id = "$buttonCount".toInt() + 1
             button.text = "Get Layer $buttonCount"
-//            button.setBackgroundColor(ContextCompat.getColor(this, R.color.primary_pink))
             button.setTextColor(ContextCompat.getColor(this, R.color.white))
-//            button.setPadding(buttonHorizontalPadding,buttonVerticalPadding,buttonHorizontalPadding,buttonVerticalPadding)
             button.setBackgroundResource(R.drawable.button_round_corners)
             button.textSize = 16F
             button.layoutParams = buttonLayoutParamSet
@@ -145,47 +132,6 @@ class MainActivity : AppCompatActivity() {
 
             buttonCount++
             textViewLayersCount++
-        }
-    }
-
-    private fun wordDownloader() {
-        var result = ""
-        ioScope.launch {
-            var connection: HttpURLConnection? = null
-            try {
-                val url = URL("https://random-word-api.herokuapp.com/word?number=1")
-                connection = url.openConnection() as HttpURLConnection
-
-                val httpResult: Int = connection.responseCode
-                if (httpResult == HttpURLConnection.HTTP_OK) {
-                    val inputStream = connection.inputStream
-                    val reader = BufferedReader(InputStreamReader(inputStream))
-                    val stringBuilder = StringBuilder()
-                    var line: String?
-                    try {
-                        while (reader.readLine().also {line = it} != null) {
-                            stringBuilder.append(line + "\n")
-                        }
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    } finally {
-                        try {
-                            inputStream.close()
-                        } catch (e: IOException) {
-                            e.printStackTrace()
-                        }
-                    }
-//                    result = stringBuilder.toString().substring(2, stringBuilder.toString().length - 3)
-//                    downloadedWord = result
-                    downloadedWord = stringBuilder.toString().substring(2, stringBuilder.toString().length - 3)
-                } else {
-                    result = connection.responseMessage
-                }
-            } catch (e: java.lang.Exception) {
-                e.printStackTrace()
-            } finally {
-                connection?.disconnect()
-            }
         }
     }
 }
